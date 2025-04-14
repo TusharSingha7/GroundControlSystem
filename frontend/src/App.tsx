@@ -1,8 +1,8 @@
 import { useRef, useEffect, } from 'react'
 import mapboxgl from 'mapbox-gl'
 import { useState } from 'react';
-import useMarkers from '../utils/markerControls';
-import downloadArrayAsJson from '../utils/downloader'
+import useMarkers from './utils/markerControls';
+import downloadArrayAsJson from './utils/downloader'
 import {ACCESS_TOKEN} from './config'
 
 import 'mapbox-gl/dist/mapbox-gl.css';
