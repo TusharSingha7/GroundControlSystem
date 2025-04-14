@@ -28,6 +28,7 @@ function App() {
   const [lat, setLat] = useState<number>(28.6014)
   const [zoomLevel, setZoomLevel] = useState<number>(12)
   const [seq,setSeq] = useState<number>(1);
+  const [alt,setAlt] = useState<number>(0);
 
   useEffect(() => {
     mapboxgl.accessToken = 'pk.eyJ1IjoidHVzaGFyc2luZ2g0NzkiLCJhIjoiY205ZTN6MmViMTV6MjJ2czVvcWljMHFobyJ9.9eMwG1oPRqy6YUi9_Gk_Cw'
@@ -42,8 +43,10 @@ function App() {
     mapRef.current.on('move', () => {
       const mapCenter = mapRef.current!.getCenter()
       const mapZoom = mapRef.current!.getZoom()
+      const elevation = mapRef.current!.queryTerrainElevation(mapCenter) || 0;
       setCenter([ mapCenter.lng, mapCenter.lat ])
       setZoom(mapZoom)
+      setAlt(elevation)
       setLat(mapCenter.lat);
       setLong(mapCenter.lng);
       if((mapCenter.lng).toFixed(4) === INITIAL_CENTER[0].toFixed(4) && (mapCenter.lat).toFixed(4) === INITIAL_CENTER[1].toFixed(4) && mapZoom.toFixed(2) === INITIAL_ZOOM.toFixed(2)) {
@@ -205,7 +208,7 @@ function App() {
     <>
       <div className='w-2 h-2 rounded-lg absolute z-10 bg-red-400 inset-0 m-auto'></div>
       <div className="sidebar">
-        Longitude: {center[0].toFixed(4)} | Latitude: {center[1].toFixed(4)} | Zoom: {zoom.toFixed(2)}
+        Longitude: {center[0].toFixed(4)} | Latitude: {center[1].toFixed(4)} | Alt: {alt.toFixed(4)} | Zoom: {zoom.toFixed(2)}
       </div>
       {show && <button className='reset-button' onClick={handleButtonClick}>
           Reset
