@@ -8,55 +8,25 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import './App.css'
 
 const INITIAL_CENTER: [number, number] = [
-  77.1576,
-  28.6014
+  77.3217,
+  28.4740
 ]
-const INITIAL_ZOOM = 5
+const INITIAL_ZOOM = 12
 function App() {
 
   const mapRef = useRef<mapboxgl.Map | null>(null)
-  const mapContainerRef = useRef(null)
+  const mapContainerRef = useRef<HTMLDivElement>(null)
   const seqNumber = useRef(1);
-  const {addMarker , removeMarker} = useMarkers();
+  const {addMarker , removeMarker , editMarker , markersRef} = useMarkers();
+  const arrayRef = useRef<number[]>([])
 
   const [center, setCenter] = useState<[number, number]>(INITIAL_CENTER)
   const [zoom, setZoom] = useState<number>(INITIAL_ZOOM)
   const [show, setShow] = useState<boolean>(false)
-  const [lat, setLat] = useState<number>(-78.7267)
-  const [long, setLong] = useState<number>(37.5099)
-  const [zoomLevel, setZoomLevel] = useState<number>(5)
-  const [alt,setAlt] = useState<number>(0);
-  const [seq,setSeq] = useState<number>(0);
-
-  const geojson = {
-    type: 'FeatureCollection',
-    features: [
-      {
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: [-77.032, 38.913],
-          alitude: 0
-        },
-        properties: {
-          title: 'Mapbox',
-          description: 'Washington, D.C.'
-        }
-      },
-      {
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates : [-122.414, 37.776],
-          alitude: 0
-        },
-        properties: {
-          title: 'Mapbox',
-          description: 'San Francisco, California'
-        }
-      }
-    ]
-  };
+  const [long, setLong] = useState<number>(77.1576)
+  const [lat, setLat] = useState<number>(28.6014)
+  const [zoomLevel, setZoomLevel] = useState<number>(12)
+  const [seq,setSeq] = useState<number>(1);
 
   useEffect(() => {
     mapboxgl.accessToken = 'pk.eyJ1IjoidHVzaGFyc2luZ2g0NzkiLCJhIjoiY205ZTN6MmViMTV6MjJ2czVvcWljMHFobyJ9.9eMwG1oPRqy6YUi9_Gk_Cw'
@@ -68,103 +38,64 @@ function App() {
       pitch: 60
     });
 
-    for (const feature of geojson.features) {
-      
-      new mapboxgl.Marker({draggable:true}).setLngLat(feature.geometry.coordinates as [number, number]).setAltitude(feature.geometry.alitude).setPopup(
-        new mapboxgl.Popup({ offset: 25 }) 
-          .setHTML(
-            `<h3>${feature.properties.title}</h3>
-            <h1>${feature.geometry.alitude}</h1>
-            <h1>${feature.geometry.coordinates[0]}</h1>
-            <h1>${feature.geometry.coordinates[1]}</h1>
-            <p>${feature.properties.description}</p>`
-          )
-      ).addTo(mapRef.current);  
-
-    }
-
     mapRef.current.on('move', () => {
-      // get the current center coordinates and zoom level from the map
       const mapCenter = mapRef.current!.getCenter()
       const mapZoom = mapRef.current!.getZoom()
       setCenter([ mapCenter.lng, mapCenter.lat ])
       setZoom(mapZoom)
-  
+      setLat(mapCenter.lat);
+      setLong(mapCenter.lng);
       if((mapCenter.lng).toFixed(4) === INITIAL_CENTER[0].toFixed(4) && (mapCenter.lat).toFixed(4) === INITIAL_CENTER[1].toFixed(4) && mapZoom.toFixed(2) === INITIAL_ZOOM.toFixed(2)) {
         setShow(false)
       }
       else setShow(true)
     });
-    // mapRef.current.on('load', () => {
-      // Add a GeoJSON source for the circle layer
-      // mapRef.current!.addSource('dem', {
-      //   type: 'raster-dem',
-      //   url: 'mapbox://mapbox.mapbox-terrain-dem-v1'
-      // });
-    
-      // mapRef.current!.setTerrain({ source: 'dem' });
-      // mapRef.current!.addSource('center-point', {
-      //   type: 'geojson',
-      //   data: {
-      //     type: 'FeatureCollection',
-      //     features: [
-      //       {
-      //         type: 'Feature',
-      //         geometry: {
-      //           type: 'Point',
-      //           coordinates: mapRef.current!.getCenter().toArray() // Initial position
-      //         },
-      //         properties : {
+    mapRef.current.on('load', () => {
+      mapRef.current!.addSource('mapbox-dem', {
+          'type': 'raster-dem',
+          'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+          'tileSize': 512,
+          'maxzoom': 14 
+      });
+      mapRef.current!.setTerrain({
+        'source': 'mapbox-dem', 
+        'exaggeration': 1.5 
+      });
 
-      //         }
-      //       }
-      //     ]
-      //   }
-      // });
-    
-      // // Add a circle layer for the red dot
-      // mapRef.current!.addLayer({
-      //   id: 'center-point-layer',
-      //   type: 'circle',
-      //   source: 'center-point',
-      //   paint: {
-      //     'circle-radius': 5,
-      //     'circle-color': '#F84C4C' // Red color
-      //   }
-      // });
-    
-      // Update circle position on mapRef.current movement
-    //   mapRef.current!.on('move', () => {
-    //     const center = mapRef.current!.getCenter();
-    //     const geojson: GeoJSON.FeatureCollection<GeoJSON.Geometry> = {
-    //       type: 'FeatureCollection',
-    //       features: [
-    //         {
-    //           type: 'Feature',
-    //           geometry: {
-    //             type: 'Point',
-    //             coordinates: [center.lng, center.lat]
-    //           },
-    //           properties: {}
-    //         }
-    //       ]
-    //     };
-    //     const source = mapRef.current!.getSource('center-point');
-    //     if (source) {
-    //       (source as mapboxgl.GeoJSONSource).setData(geojson);
-    //     }
-    //   });
-    // });
-    
+      mapRef.current!.addSource('sequential-marker-line-source',{
+        'type': 'geojson',
+        'data': {
+          'type' : 'Feature',
+          'properties' : {},
+          'geometry' : {
+            'type' : 'LineString',
+            'coordinates' : []
+          }
+        }
+      });
+
+      mapRef.current!.addLayer({
+        id: 'sequential-marker-line-layer-id',
+        type: 'line',
+        source: 'sequential-marker-line-source',
+        layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        paint: { 
+            'line-color': '#007bff', 
+            'line-width': 4
+        }
+    });
+        
+    });
 
     mapRef.current!.on('click',()=> {
         console.log(mapRef.current?.getCenter())
     })
 
     return () => {
-      if (mapRef.current) {
-        mapRef.current.remove()
-      }
+      mapRef.current?.remove()
     }
   }, [])
 
@@ -182,20 +113,78 @@ function App() {
   }
 
   const handleAddMaker = () => {
-    addMarker({
+    const res = addMarker({
       map: mapRef.current!,
-      coordinates: center,
-      altitude: alt,
-      title: "Untitled Marker",
-      description: "",
-      sequenceNumber: seqNumber.current
+      coordinates: [long,lat],
+      sequenceNumber: seq
     })
-    seqNumber.current += 1;
+    if(res) {
+      arrayRef.current.push(seq);
+      if(seq == seqNumber.current) seqNumber.current += 1;
+      else if(seqNumber.current < seq) seqNumber.current = seq + 1;
+      setSeq(seqNumber.current);
+    }
   }
 
   const deleteHandler = ()=>{
+    if(markersRef.current.has(seq)) {
+      const idx = arrayRef.current.indexOf(seq,0);
+      arrayRef.current.splice(idx,1);
+    }
+
     const res = removeMarker(seq);
+
     if(res && seq == seqNumber.current-1) seqNumber.current -= 1;
+    if(res) console.log("markert removed : " + seq);
+    else console.log(`marker with seq ${seq} doesnt exist`)
+
+    if(markersRef.current.size == 0) {
+      seqNumber.current = 1;
+      setSeq(1);
+    }
+  }
+
+  const editHandler = () => {
+    const res = editMarker({
+      map : mapRef.current!,
+      coordinates : [long,lat],
+      sequenceNumber : seq
+    });
+    if(res) {
+      //marker is edited
+    }
+  }
+
+  const displayPathHandler = ()=> {
+      arrayRef.current.sort((a:number,b:number)=>a - b);
+      const source : mapboxgl.GeoJSONSource | undefined = mapRef.current!.getSource('sequential-marker-line-source');
+      const sortedMarkersCoordinates : [number,number][] = [];
+      for(let i = 0;i<arrayRef.current.length;i++) {
+        const tar_marker = markersRef.current.get(arrayRef.current[i]);
+        const tar_lng = tar_marker!.getLngLat().lng;
+        const tar_lat = tar_marker!.getLngLat().lat;
+        sortedMarkersCoordinates.push([tar_lng , tar_lat]);
+      }
+        source!.setData({
+          type: 'Feature',
+              properties: {},
+              geometry: {
+                  type: 'LineString',
+                  coordinates: sortedMarkersCoordinates
+              }
+        });
+  }
+
+  const removePathHandler = ()=>{
+    const source : mapboxgl.GeoJSONSource | undefined = mapRef.current!.getSource('sequential-marker-line-source');
+    source!.setData({
+      type: 'Feature',
+          properties: {},
+          geometry: {
+              type: 'LineString',
+              coordinates: []
+          }
+    });
   }
 
   return (
@@ -209,26 +198,27 @@ function App() {
         </button>}
       <div className='z-10 absolute bottom-30 right-0 m-4'>
         <button className='bg-red-300 rounded-md p-1 m-2'>Download</button><br/>
-        <button className='bg-red-300 rounded-md p-1 m-2'>Connect</button>
+        <button className='bg-red-300 rounded-md p-1 m-2' onClick = {displayPathHandler}>Display Path</button><br/>
+        <button className='bg-red-300 rounded-md p-1 m-2' onClick = {removePathHandler}>Remove Path</button>
       </div>
       <div id='map-container' ref={mapContainerRef} className='h-full w-full bg-lightgrey'/>
       <div className='flex z-10 absolute bottom-10 right-0 m-4 flex-col gap-2'>
           <div className='bg-red-300 rounded-md p-1 flex ml-auto'>
             <input className='w-52' placeholder='Marker seqNo' type='number' onChange={(e)=>setSeq(Number(e.target.value))}></input>
-            <button className='bg-red-300' onClick={deleteHandler}>CustomSeq</button>
           </div>
           <div className='bg-red-300 rounded-md p-1 flex ml-auto'>
-            <input placeholder='Enter SeqNumber' type='number' onChange={(e)=>setSeq(Number(e.target.value))}></input>
+            <button className='' onClick={editHandler}>Edit Marker</button>
+          </div>
+          <div className='bg-red-300 rounded-md p-1 flex ml-auto'>
             <button className='' onClick={deleteHandler}>Delete Marker</button>
           </div>
           <div className='bg-red-300 rounded-md p-1 flex ml-auto'>
-            <input placeholder='Enter Alt' type='number' onChange={(e)=>{setAlt(Number(e.target.value))}}></input>
             <button className='' onClick={handleAddMaker}>Add Marker</button>
           </div>
       </div>
       <div className=' bg-red-300 rounded-md p-1 flex flex-wrap z-10 absolute bottom-0 right-0 m-4'>
-            <input placeholder='Enter Lat' type='number' onChange={(e)=>{setLat(Number(e.target.value))}}></input>
             <input placeholder='Enter Long' type='number' onChange={(e)=>{setLong(Number(e.target.value))}}></input>
+            <input placeholder='Enter Lat' type='number' onChange={(e)=>{setLat(Number(e.target.value))}}></input>
             <input placeholder='Enter Zoom' type='number' onChange={(e)=>{setZoomLevel(Number(e.target.value))}}></input>
             <button className='px-4 rounder-md' onClick={customFlyer}> Fly</button>
       </div>
