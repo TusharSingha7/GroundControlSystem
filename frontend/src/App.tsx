@@ -95,10 +95,6 @@ function App() {
         
     });
 
-    mapRef.current!.on('click',()=> {
-        console.log(mapRef.current?.getCenter())
-    })
-
     return () => {
       mapRef.current?.remove()
     }
@@ -112,7 +108,7 @@ function App() {
   }
   const customFlyer = () => {
     mapRef.current!.flyTo({
-      center : [lat,long],
+      center : [long,lat],
       zoom : zoomLevel
     })
   }
@@ -140,8 +136,6 @@ function App() {
     const res = removeMarker(seq);
 
     if(res && seq == seqNumber.current-1) seqNumber.current -= 1;
-    if(res) console.log("markert removed : " + seq);
-    else console.log(`marker with seq ${seq} doesnt exist`)
 
     if(markersRef.current.size == 0) {
       seqNumber.current = 1;

@@ -17,6 +17,7 @@ export default function useMarkers() {
     coordinates,
     sequenceNumber,
   }: CustomMarkerOptions) => {
+    try{
     if(markersRef.current.has(sequenceNumber)) return false;
     const marker = new mapboxgl.Marker({draggable : true});
     marker.setLngLat(coordinates);
@@ -42,6 +43,11 @@ export default function useMarkers() {
     `)
     })
     markersRef.current.set(sequenceNumber, marker);
+  }
+  catch(err) {
+    alert(err);
+    return false;
+  }
     return true;
   };
 
@@ -59,18 +65,24 @@ export default function useMarkers() {
   };
 
   const editMarker = ({sequenceNumber , coordinates , map} : CustomMarkerOptions ) => {
-    if(markersRef.current.has(sequenceNumber)) {
-      const target_marker = markersRef.current.get(sequenceNumber);
-      target_marker?.setLngLat(coordinates);
-      const marker_popup = target_marker?.getPopup();
-      const altitude = map.queryTerrainElevation(coordinates);
-      marker_popup?.setHTML(`
-        <h1>Alt: ${altitude}</h1>
-        <h1>Lng: ${coordinates[0]}</h1>
-        <h1>Lat: ${coordinates[1]}</h1>
-        <h1>Seq: ${sequenceNumber}</h1>
-    `)
-      return true;
+    try {
+      if(markersRef.current.has(sequenceNumber)) {
+        const target_marker = markersRef.current.get(sequenceNumber);
+        target_marker?.setLngLat(coordinates);
+        const marker_popup = target_marker?.getPopup();
+        const altitude = map.queryTerrainElevation(coordinates);
+        marker_popup?.setHTML(`
+          <h1>Alt: ${altitude}</h1>
+          <h1>Lng: ${coordinates[0]}</h1>
+          <h1>Lat: ${coordinates[1]}</h1>
+          <h1>Seq: ${sequenceNumber}</h1>
+      `)
+        return true;
+      }
+      return false;
+    }
+    catch(err) {
+      alert(err);
     }
     return false;
   }
