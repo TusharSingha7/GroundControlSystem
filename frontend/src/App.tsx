@@ -1,7 +1,8 @@
 import { useRef, useEffect, } from 'react'
 import mapboxgl from 'mapbox-gl'
 import { useState } from 'react';
-import useMarkers from '../utils/markerAdder';
+import useMarkers from '../utils/markerControls';
+import downloadArrayAsJson from '../utils/downloader'
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -187,6 +188,19 @@ function App() {
     });
   }
 
+  const downloadHandler = ()=>{
+    try {
+      const data = mapRef.current?.querySourceFeatures('sequential-marker-line-source');
+      if(!data) alert("invalid data");
+      else {
+        downloadArrayAsJson(data);
+      }
+    }
+    catch(err) {
+      alert(err);
+    }
+  }
+
   return (
     <>
       <div className='w-2 h-2 rounded-lg absolute z-10 bg-red-400 inset-0 m-auto'></div>
@@ -197,7 +211,7 @@ function App() {
           Reset
         </button>}
       <div className='z-10 absolute bottom-30 right-0 m-4'>
-        <button className='bg-red-300 rounded-md p-1 m-2'>Download</button><br/>
+        <button className='bg-red-300 rounded-md p-1 m-2' onClick = {downloadHandler}>Download Path</button><br/>
         <button className='bg-red-300 rounded-md p-1 m-2' onClick = {displayPathHandler}>Display Path</button><br/>
         <button className='bg-red-300 rounded-md p-1 m-2' onClick = {removePathHandler}>Remove Path</button>
       </div>
