@@ -3,6 +3,7 @@ import mapboxgl from 'mapbox-gl'
 import { useState } from 'react';
 import useMarkers from '../utils/markerControls';
 import downloadArrayAsJson from '../utils/downloader'
+import {ACCESS_TOKEN} from './config'
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -31,7 +32,7 @@ function App() {
   const [alt,setAlt] = useState<number>(0);
 
   useEffect(() => {
-    mapboxgl.accessToken = 'pk.eyJ1IjoidHVzaGFyc2luZ2g0NzkiLCJhIjoiY205ZTN6MmViMTV6MjJ2czVvcWljMHFobyJ9.9eMwG1oPRqy6YUi9_Gk_Cw'
+    mapboxgl.accessToken = ACCESS_TOKEN
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current! as HTMLElement,
       center: center,
