@@ -219,13 +219,13 @@ function App() {
             <input className='w-52' placeholder='Marker seqNo' type='number' onChange={(e)=>setSeq(Number(e.target.value))}></input>
           </div>
           <div className='bg-red-300 rounded-md p-1 flex ml-auto'>
-            <button className='' onClick={editHandler}>Edit Marker</button>
+            <button className='' onClick={editHandler}>Edit Waypoint</button>
           </div>
           <div className='bg-red-300 rounded-md p-1 flex ml-auto'>
-            <button className='' onClick={deleteHandler}>Delete Marker</button>
+            <button className='' onClick={deleteHandler}>Delete Waypoint</button>
           </div>
           <div className='bg-red-300 rounded-md p-1 flex ml-auto'>
-            <button className='' onClick={handleAddMaker}>Add Marker</button>
+            <button className='' onClick={handleAddMaker}>Add Waypoint</button>
           </div>
       </div>
       <div className=' bg-red-300 rounded-md p-1 flex flex-wrap z-10 absolute bottom-0 right-0 m-4'>
