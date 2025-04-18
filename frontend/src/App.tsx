@@ -263,7 +263,7 @@ function App() {
       {show && <button className='reset-button' onClick={handleButtonClick}>
           Reset
         </button>}
-      <div className='z-10 absolute bottom-30 right-0 m-4'>
+      <div className='z-10 absolute top-10 right-0 m-4'>
         <button className='bg-red-300 rounded-md p-1 m-2' onClick = {downloadHandler}>Download Path</button><br/>
         <button className='bg-red-300 rounded-md p-1 m-2' onClick = {displayPathHandler}>Display Path</button><br/>
         <button className='bg-red-300 rounded-md p-1 m-2' onClick = {displayRouteHandler}>Display Route</button><br/>
