@@ -56,7 +56,11 @@ function App() {
       }
       else setShow(true)
     });
+
+    const geolocate = new mapboxgl.GeolocateControl({showAccuracyCircle : true , showUserLocation:true , showUserHeading:true});
+    mapRef.current.addControl(geolocate);
     mapRef.current.on('load', () => {
+      geolocate.trigger();
       mapRef.current!.addSource('mapbox-dem', {
           'type': 'raster-dem',
           'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
