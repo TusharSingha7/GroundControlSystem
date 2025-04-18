@@ -1,6 +1,7 @@
 // hooks/useMarkers.ts
 import { useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
+import trafficimg from '../images/traffic-light.jpg'
 
 export type MarkerRefs = Map<number, mapboxgl.Marker>;
 export type CustomMarkerOptions = {
@@ -19,7 +20,11 @@ export default function useMarkers() {
   }: CustomMarkerOptions) => {
     try{
     if(markersRef.current.has(sequenceNumber)) return false;
-    const marker = new mapboxgl.Marker({draggable : true});
+    // const element = document.createElement('img');
+    // element.setAttribute('src' , trafficimg);
+    // element.setAttribute('height' , '30');
+    // element.setAttribute('width' , '30');
+    const marker = new mapboxgl.Marker({draggable: true});
     marker.setLngLat(coordinates);
     const popup = new mapboxgl.Popup({ offset: 25 , closeButton : true , closeOnClick : true,
       closeOnMove : true

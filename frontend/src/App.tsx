@@ -4,6 +4,7 @@ import { useState } from 'react';
 import useMarkers from './utils/markerControls';
 import downloadArrayAsJson from './utils/downloader'
 import {ACCESS_TOKEN} from './config'
+import getRoute from './utils/getRoute';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -25,8 +26,8 @@ function App() {
   const [center, setCenter] = useState<[number, number]>(INITIAL_CENTER)
   const [zoom, setZoom] = useState<number>(INITIAL_ZOOM)
   const [show, setShow] = useState<boolean>(false)
-  const [long, setLong] = useState<number>(77.1576)
-  const [lat, setLat] = useState<number>(28.6014)
+  const [long, setLong] = useState<number>(77.3217)
+  const [lat, setLat] = useState<number>(28.4740)
   const [zoomLevel, setZoomLevel] = useState<number>(12)
   const [seq,setSeq] = useState<number>(1);
   const [alt,setAlt] = useState<number>(0);
@@ -198,6 +199,32 @@ function App() {
       alert(err);
     }
   }
+  const displayRouteHandler = ()=>{
+    arrayRef.current.sort((a:number,b:number)=>a - b);
+    const sortedMarkersCoordinates : [number,number][] = [];
+      for(let i = 0;i<arrayRef.current.length;i++) {
+        const tar_marker = markersRef.current.get(arrayRef.current[i]);
+        const tar_lng = tar_marker!.getLngLat().lng;
+        const tar_lat = tar_marker!.getLngLat().lat;
+        sortedMarkersCoordinates.push([tar_lng , tar_lat]);
+      }
+    getRoute({
+      coordinates : sortedMarkersCoordinates,
+      mapRef : mapRef
+    })
+  }
+
+  const removeRouteHandler = ()=> {
+    const source : mapboxgl.GeoJSONSource | undefined = mapRef.current!.getSource('route');
+    source!.setData({
+      type: 'Feature',
+          properties: {},
+          geometry: {
+              type: 'LineString',
+              coordinates: []
+          }
+    });
+  }
 
   return (
     <>
@@ -211,7 +238,9 @@ function App() {
       <div className='z-10 absolute bottom-30 right-0 m-4'>
         <button className='bg-red-300 rounded-md p-1 m-2' onClick = {downloadHandler}>Download Path</button><br/>
         <button className='bg-red-300 rounded-md p-1 m-2' onClick = {displayPathHandler}>Display Path</button><br/>
-        <button className='bg-red-300 rounded-md p-1 m-2' onClick = {removePathHandler}>Remove Path</button>
+        <button className='bg-red-300 rounded-md p-1 m-2' onClick = {displayRouteHandler}>Display Route</button><br/>
+        <button className='bg-red-300 rounded-md p-1 m-2' onClick = {removePathHandler}>Remove Path</button><br/>
+        <button className='bg-red-300 rounded-md p-1 m-2' onClick = {removeRouteHandler}>Remove Route</button>
       </div>
       <div id='map-container' ref={mapContainerRef} className='h-full w-full bg-lightgrey'/>
       <div className='flex z-10 absolute bottom-10 right-0 m-4 flex-col gap-2'>
