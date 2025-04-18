@@ -67,7 +67,31 @@ function App() {
         'source': 'mapbox-dem', 
         'exaggeration': 1.5 
       });
-
+      mapRef.current?.addSource('route' , {
+        'type': 'geojson',
+        'data': {
+          'type' : 'Feature',
+          'properties' : {},
+          'geometry' : {
+            'type' : 'LineString',
+            'coordinates' : []
+          }
+        }
+      })
+      mapRef.current?.addLayer({
+        id: 'route',
+        type: 'line',
+        source: 'route',
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round'
+        },
+        paint: {
+          'line-color': '#FF3300',
+          'line-width': 5,
+          'line-opacity': 0.75
+        }
+      });
       mapRef.current!.addSource('sequential-marker-line-source',{
         'type': 'geojson',
         'data': {
