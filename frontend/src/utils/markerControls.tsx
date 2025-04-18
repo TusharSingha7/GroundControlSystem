@@ -1,7 +1,6 @@
 // hooks/useMarkers.ts
 import { useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
-import trafficimg from '../images/traffic-light.jpg'
 
 export type MarkerRefs = Map<number, mapboxgl.Marker>;
 export type CustomMarkerOptions = {
