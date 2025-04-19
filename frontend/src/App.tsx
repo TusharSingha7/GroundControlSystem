@@ -49,8 +49,6 @@ function App() {
       setCenter([ mapCenter.lng, mapCenter.lat ])
       setZoom(mapZoom)
       setAlt(elevation)
-      setLat(mapCenter.lat);
-      setLong(mapCenter.lng);
       if((mapCenter.lng).toFixed(4) === INITIAL_CENTER[0].toFixed(4) && (mapCenter.lat).toFixed(4) === INITIAL_CENTER[1].toFixed(4) && mapZoom.toFixed(2) === INITIAL_ZOOM.toFixed(2)) {
         setShow(false)
       }
@@ -126,21 +124,18 @@ function App() {
 
     mapRef.current?.on('click',(e)=>{
       const longlat = e.lngLat;
-      console.log("clicked");
-      setLong(longlat.lng);
-      setLat(longlat.lat);
-      const res = addMarker({
-        map: mapRef.current!,
-        coordinates: [longlat.lng,longlat.lat],
-        sequenceNumber: seqNumber.current
-      })
-      seqNumber.current += 1;
+      setLong(()=>longlat.lng);
+      setLat(()=>longlat.lat);
     })
 
     return () => {
       mapRef.current?.remove()
     }
   }, [])
+
+  useEffect(()=>{
+    handleAddMaker();
+  },[long,lat]);
 
   const handleButtonClick = () => {
     mapRef.current!.flyTo({
@@ -162,8 +157,10 @@ function App() {
       sequenceNumber: seq
     })
     if(res) {
-      setSeq(seq + 1);
-      seqNumber.current += 1;
+      arrayRef.current.push(seq);
+      if(seq == seqNumber.current) seqNumber.current += 1;
+      else if(seqNumber.current < seq) seqNumber.current = seq + 1;
+      setSeq(seqNumber.current);
     }
   }
 

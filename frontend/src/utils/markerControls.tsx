@@ -19,18 +19,16 @@ export default function useMarkers() {
   }: CustomMarkerOptions) => {
     try{
     if(markersRef.current.has(sequenceNumber)) {
-      console.log("returnnign afalse");
-      console.log(sequenceNumber)
       return false;
     }
-    // const element = document.createElement('img');
-    // element.setAttribute('src' , trafficimg);
+    // const element = document.createElement('div');
+    // element.innerHTML = `${sequenceNumber}`
     // element.setAttribute('height' , '30');
     // element.setAttribute('width' , '30');
     const marker = new mapboxgl.Marker({draggable: true});
     marker.setLngLat(coordinates);
     const popup = new mapboxgl.Popup({ offset: 25 , closeButton : true , closeOnClick : true,
-      closeOnMove : true
+      closeOnMove : true 
     });
     const altitude = map.queryTerrainElevation(coordinates);
     popup.setHTML(`
