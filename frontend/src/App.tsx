@@ -124,6 +124,19 @@ function App() {
         
     });
 
+    mapRef.current?.on('click',(e)=>{
+      const longlat = e.lngLat;
+      console.log("clicked");
+      setLong(longlat.lng);
+      setLat(longlat.lat);
+      const res = addMarker({
+        map: mapRef.current!,
+        coordinates: [longlat.lng,longlat.lat],
+        sequenceNumber: seqNumber.current
+      })
+      seqNumber.current += 1;
+    })
+
     return () => {
       mapRef.current?.remove()
     }
@@ -149,10 +162,8 @@ function App() {
       sequenceNumber: seq
     })
     if(res) {
-      arrayRef.current.push(seq);
-      if(seq == seqNumber.current) seqNumber.current += 1;
-      else if(seqNumber.current < seq) seqNumber.current = seq + 1;
-      setSeq(seqNumber.current);
+      setSeq(seq + 1);
+      seqNumber.current += 1;
     }
   }
 

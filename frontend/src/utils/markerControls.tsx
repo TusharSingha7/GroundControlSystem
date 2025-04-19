@@ -18,7 +18,11 @@ export default function useMarkers() {
     sequenceNumber,
   }: CustomMarkerOptions) => {
     try{
-    if(markersRef.current.has(sequenceNumber)) return false;
+    if(markersRef.current.has(sequenceNumber)) {
+      console.log("returnnign afalse");
+      console.log(sequenceNumber)
+      return false;
+    }
     // const element = document.createElement('img');
     // element.setAttribute('src' , trafficimg);
     // element.setAttribute('height' , '30');
