@@ -21,13 +21,15 @@ export default function useMarkers() {
     if(markersRef.current.has(sequenceNumber)) {
       return false;
     }
-    // const element = document.createElement('div');
-    // element.innerHTML = `${sequenceNumber}`
-    // element.setAttribute('height' , '30');
-    // element.setAttribute('width' , '30');
-    const marker = new mapboxgl.Marker({draggable: true});
+    const element = document.createElement('div');
+    element.setAttribute('class','custom-teardrop-marker');
+    // const inside_span = document.createElement('span');
+    // inside_span.innerHTML = `${sequenceNumber}`
+    // element.appendChild(inside_span);
+    element.innerHTML = `${sequenceNumber}`
+    const marker = new mapboxgl.Marker({draggable: true , element});
     marker.setLngLat(coordinates);
-    const popup = new mapboxgl.Popup({ offset: 25 , closeButton : true , closeOnClick : true,
+    const popup = new mapboxgl.Popup({ closeButton : true , closeOnClick : true,
       closeOnMove : true 
     });
     const altitude = map.queryTerrainElevation(coordinates);

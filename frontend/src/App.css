@@ -28,3 +28,31 @@
   border-radius: 10px;
   cursor: pointer;
 }
+.custom-teardrop-marker {
+  background-color: #007cbf; /* Default Mapbox marker color */
+  width: 20px; /* Adjust as needed */
+  height: 30px; /* Adjust as needed */
+  position: absolute;
+  border-radius: 10px 10px 0 0; /* Rounded top */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white; /* Number color */
+  font-size: 12px; /* Adjust font size */
+  font-weight: bold;
+  cursor: default;
+}
+
+/* Create the teardrop point */
+.custom-teardrop-marker::before {
+  content: '';
+  position: absolute;
+  bottom: -10px; /* Adjust based on height */
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent; /* Adjust based on width */
+  border-right: 10px solid transparent; /* Adjust based on width */
+  border-top: 10px solid #007cbf; /* Match marker color */
+  transform: translateX(-50%);
+}

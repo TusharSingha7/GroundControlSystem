@@ -20,7 +20,7 @@ function App() {
   const mapRef = useRef<mapboxgl.Map | null>(null)
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const seqNumber = useRef(1);
-  const {addMarker , removeMarker , editMarker , markersRef} = useMarkers();
+  const {addMarker , removeMarker  , markersRef} = useMarkers();
   const arrayRef = useRef<number[]>([])
 
   const [center, setCenter] = useState<[number, number]>(INITIAL_CENTER)
@@ -124,19 +124,22 @@ function App() {
 
     mapRef.current?.on('click',(e)=>{
       const longlat = e.lngLat;
-      setLong(()=>longlat.lng);
-      setLat(()=>longlat.lat);
+      const res = addMarker({
+        map: mapRef.current!,
+        coordinates: [longlat.lng,longlat.lat],
+        sequenceNumber: seqNumber.current
+      })
+      if(res) {
+        arrayRef.current.push(seqNumber.current);
+        seqNumber.current += 1;
+      }
     })
 
     return () => {
       mapRef.current?.remove()
     }
   }, [])
-
-  useEffect(()=>{
-    handleAddMaker();
-  },[long,lat]);
-
+  
   const handleButtonClick = () => {
     mapRef.current!.flyTo({
       center: INITIAL_CENTER,
@@ -148,20 +151,6 @@ function App() {
       center : [long,lat],
       zoom : zoomLevel
     })
-  }
-
-  const handleAddMaker = () => {
-    const res = addMarker({
-      map: mapRef.current!,
-      coordinates: [long,lat],
-      sequenceNumber: seq
-    })
-    if(res) {
-      arrayRef.current.push(seq);
-      if(seq == seqNumber.current) seqNumber.current += 1;
-      else if(seqNumber.current < seq) seqNumber.current = seq + 1;
-      setSeq(seqNumber.current);
-    }
   }
 
   const deleteHandler = ()=>{
@@ -177,17 +166,6 @@ function App() {
     if(markersRef.current.size == 0) {
       seqNumber.current = 1;
       setSeq(1);
-    }
-  }
-
-  const editHandler = () => {
-    const res = editMarker({
-      map : mapRef.current!,
-      coordinates : [long,lat],
-      sequenceNumber : seq
-    });
-    if(res) {
-      //marker is edited
     }
   }
 
@@ -272,7 +250,7 @@ function App() {
           Reset
         </button>}
       <div className='z-10 absolute top-10 right-0 m-4'>
-        <button className='bg-red-300 rounded-md p-1 m-2' onClick = {downloadHandler}>Download Path</button><br/>
+        <button className='bg-red-300 rounded-md p-1 m-2' onClick = {downloadHandler}>Export mission</button><br/>
         <button className='bg-red-300 rounded-md p-1 m-2' onClick = {displayPathHandler}>Display Path</button><br/>
         <button className='bg-red-300 rounded-md p-1 m-2' onClick = {displayRouteHandler}>Display Route</button><br/>
         <button className='bg-red-300 rounded-md p-1 m-2' onClick = {removePathHandler}>Remove Path</button><br/>
@@ -284,13 +262,7 @@ function App() {
             <input className='w-52' placeholder='Marker seqNo' type='number' onChange={(e)=>setSeq(Number(e.target.value))}></input>
           </div>
           <div className='bg-red-300 rounded-md p-1 flex ml-auto'>
-            <button className='' onClick={editHandler}>Edit Waypoint</button>
-          </div>
-          <div className='bg-red-300 rounded-md p-1 flex ml-auto'>
             <button className='' onClick={deleteHandler}>Delete Waypoint</button>
-          </div>
-          <div className='bg-red-300 rounded-md p-1 flex ml-auto'>
-            <button className='' onClick={handleAddMaker}>Add Waypoint</button>
           </div>
       </div>
       <div className=' bg-red-300 rounded-md p-1 flex flex-wrap z-10 absolute bottom-0 right-0 m-4'>
