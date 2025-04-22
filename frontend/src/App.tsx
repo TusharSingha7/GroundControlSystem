@@ -242,7 +242,6 @@ function App() {
 
   return (
     <>
-      <div className='w-2 h-2 rounded-lg absolute z-10 bg-red-400 inset-0 m-auto'></div>
       <div className="sidebar">
         Longitude: {center[0].toFixed(4)} | Latitude: {center[1].toFixed(4)} | Alt: {alt.toFixed(4)} | Zoom: {zoom.toFixed(2)}
       </div>
