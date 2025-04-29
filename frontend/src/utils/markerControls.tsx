@@ -27,7 +27,7 @@ export default function useMarkers() {
     // inside_span.innerHTML = `${sequenceNumber}`
     // element.appendChild(inside_span);
     element.innerHTML = `${sequenceNumber}`
-    const marker = new mapboxgl.Marker({draggable: true , element});
+    const marker = new mapboxgl.Marker({offset : [0,-25] , draggable: true , element});
     marker.setLngLat(coordinates);
     const popup = new mapboxgl.Popup({ closeButton : true , closeOnClick : true,
       closeOnMove : true 
@@ -40,6 +40,7 @@ export default function useMarkers() {
         <h1>Seq: ${sequenceNumber}</h1>
     `)
     marker.setPopup(popup);
+   
     marker.addTo(map);
     marker.on('drag',(e)=>{
         const faltitude = map.queryTerrainElevation(e.target.getLngLat());
